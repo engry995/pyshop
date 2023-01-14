@@ -2,11 +2,13 @@
 #
 # See documentation in:
 # https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+import time
 
 from scrapy import signals
 from scrapy.http import HtmlResponse
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+import undetected_chromedriver as uc
 
 # useful for handling different item types with a single interface
 from itemadapter import is_item, ItemAdapter
@@ -65,9 +67,16 @@ class OzonDownloaderMiddleware:
     # passed objects.
 
     def __init__(self):
-        options = Options()
-        options.headless = True
-        self.browser = webdriver.Chrome(options=options)
+        # options = Options()
+        # options.headless = True
+        # self.browser = webdriver.Chrome(options=options)
+        options = uc.ChromeOptions()
+        options.add_argument('--blink-settings=imagesEnabled=false')
+        self.browser = uc.Chrome(options=options)
+    #
+    # def __del__(self):
+    #     self.browser.quit()
+    #     self.browser.close()
 
     @classmethod
     def from_crawler(cls, crawler):
@@ -87,9 +96,13 @@ class OzonDownloaderMiddleware:
         # - or raise IgnoreRequest: process_exception() methods of
         #   installed downloader middleware will be called
 
+        print(f'Начало запроса на URL: {request.url}')
         self.browser.get(request.url)
+        print(f'Конец запроса на URL:{request.url}')
+
         body = self.browser.page_source
-        response = HtmlResponse(url=self.browser.current_url, body=body)
+        response = HtmlResponse(url=self.browser.current_url, body=body, encoding='utf-8')
+        # self.browser.quit()
         return response
 
 

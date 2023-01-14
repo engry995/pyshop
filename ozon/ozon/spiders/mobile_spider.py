@@ -8,7 +8,8 @@ class MobileSpider(scrapy.Spider):
     allowed_domains = ['ozon.ru']
     start_urls = [
         'https://www.ozon.ru/category/telefony-i-smart-chasy-15501/?sorting=rating',
+        # "http://quotes.toscrape.com/",
     ]
 
     def parse(self, response, **kwargs):
-        print('response!!!'*5)
+        print('\n\nresponse!!!'*5)
